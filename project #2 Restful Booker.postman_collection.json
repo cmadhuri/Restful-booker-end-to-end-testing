@@ -1,0 +1,2185 @@
+{
+	"info": {
+		"_postman_id": "4027b559-5b08-4137-bdfe-f9ebfb0b9250",
+		"name": "project #2 Restful Booker",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29122813"
+	},
+	"item": [
+		{
+			"name": "CRUD operations",
+			"item": [
+				{
+					"name": "authentication with script",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"/*pm.test(\"TC2-test with wrong credentials\", function () {\r",
+									"\r",
+									"\r",
+									"    pm.expect(pm.response.json().reason).to.eql(\"Bad credentials\");\r",
+									"\r",
+									"});*/\r",
+									"\r",
+									"pm.test(\"Status code is not 200\", function () {\r",
+									"    pm.response.to.not.have.status(200);\r",
+									"});\r",
+									"var responsebody = pm.response.json();\r",
+									"pm.environment.set(\"auth_token\",responsebody.token);\r",
+									"//console.log(pm.environment.get(\"auth_token\"));\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\" : \"admin\",\n    \"password\" : \"password123\"\n}"
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/auth",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"auth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bookingids",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"tc1 - response time should be less than ten seconds\",function(){\r",
+									"    pm.expect(responseTime).to.be.below(10000);//written in milliseconds\r",
+									"})\r",
+									"pm.test(\"TC2-Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"TC3-verify particular booking id is present\", function(){\r",
+									"    var bookingdetails= pm.response.json();//parse response to json\r",
+									"    var expectedBookingId =2921;//create expected booking id\r",
+									"    var bookingIdFound =false; //create variable to find booking id\r",
+									"\r",
+									"    for(var i=0; i<bookingdetails.length; i++){\r",
+									"        if(bookingdetails.bookingid == expectedBookingId){\r",
+									"            var bookingIdFound = true;//mark var is true one found\r",
+									"            break;\r",
+									"        }\r",
+									"        \r",
+									"    }\r",
+									"    //write assertion to check variable to be true\r",
+									"    pm.expect(bookingIdFound,\"booking id is not present\").to.be.true;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updatebooking",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Cookie",
+								"value": "token={{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstname\" : \"Madhuri\",\n    \"lastname\" : \"Chinnareddygari\",\n    \"totalprice\" : 111,\n    \"depositpaid\" : true,\n    \"bookingdates\" : {\n        \"checkin\" : \"2018-01-01\",\n        \"checkout\" : \"2019-01-01\"\n    },\n    \"additionalneeds\" : \"Breakfast\"\n}"
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking/{{booking_id}}",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking",
+								"{{booking_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "partialupdate",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Cookie",
+								"value": "token=b0e74af1466007b"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstname\" : \"James\",\n    \"lastname\" : \"Brown\"\n}"
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking/1",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deletebooking",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"check status code 201 created\", function(){\r",
+									"    pm.response.to.have.status(201);\r",
+									"   \r",
+									"    })\r",
+									"\r",
+									" pm.test(\"Check created string available in responsebody\",function(){\r",
+									"    pm.expect(pm.response.text()).to.include(\"Created\");\r",
+									" })   \r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Cookie",
+								"value": "token={{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking/{{booking_id}}",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking",
+								"{{booking_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createBooking_1",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"first_name\",\"Madhuri\");\r",
+									"pm.environment.set(\"last_name\",\"Chinnareddygari\");\r",
+									"pm.environment.set(\"checkin\",\"2019-01-01\");\r",
+									"pm.environment.set(\"checkout\",\"2019-01-05\");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"/*pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.not.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"verify bad request error message\",function(){\r",
+									"    pm.expect(pm.response.text()).to.include(\"Bad request\");\r",
+									"});*/\r",
+									"\r",
+									"var responsebody = pm.response.json();\r",
+									"pm.environment.set(\"booking_id\",responsebody.bookingid);\r",
+									"console.log(pm.environment.get(\"booking_id\"));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\n{\n    \"firstname\" : \"{{first_name}}\",\n    \"lastname\" : \"{{last_name}}\",\n    \"totalprice\" : 5000,\n    \"depositpaid\" : true,\n    \"bookingdates\" : {\n        \"checkin\" : \"{{checkin}}\",\n        \"checkout\" : \"{{checkout}}\"\n    },\n    \"additionalneeds\" : \"Breakfast\"\n}"
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update_booking1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Check if the response body contains the updated details\r",
+									"pm.test(\"Booking details are updated\", function () {\r",
+									"    var responseBody = pm.response.json();\r",
+									"    pm.expect(responseBody.firstname).to.equal(\"Madhuri\");\r",
+									"    pm.expect(responseBody.lastname).to.equal(\"Yadav\");\r",
+									"    pm.expect(responseBody.totalprice).to.equal(111);\r",
+									"    pm.expect(responseBody.depositpaid).to.equal(true);\r",
+									"    pm.expect(responseBody.bookingdates.checkin).to.equal(\"2018-01-01\");\r",
+									"    pm.expect(responseBody.bookingdates.checkout).to.equal(\"2019-01-01\");\r",
+									"    pm.expect(responseBody.additionalneeds).to.equal(\"Breakfast\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Cookie",
+								"value": "token={{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstname\": \"Madhuri\",\r\n    \"lastname\": \"Yadav\",\r\n    \"totalprice\": 111,\r\n    \"depositpaid\": true,\r\n    \"bookingdates\": {\r\n        \"checkin\": \"2018-01-01\",\r\n        \"checkout\": \"2019-01-01\"\r\n    },\r\n    \"additionalneeds\": \"Breakfast\"\r\n}"
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking/{{booking_id}}",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking",
+								"{{booking_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Integration1",
+			"item": [
+				{
+					"name": "auth token creation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var schema ={\r",
+									"    \"$schema\": \"https://json-schema.org/draft/2019-09/schema\",\r",
+									"    \"$id\": \"http://example.com/example.json\",\r",
+									"    \"type\": \"object\",\r",
+									"    \"default\": {},\r",
+									"    \"title\": \"Root Schema\",\r",
+									"    \"required\": [\r",
+									"        \"token\"\r",
+									"    ],\r",
+									"    \"properties\": {\r",
+									"        \"token\": {\r",
+									"            \"type\": \"string\",\r",
+									"            \"default\": \"\",\r",
+									"            \"title\": \"The token Schema\",\r",
+									"            \"examples\": [\r",
+									"                \"eadacdd6b5295f5\"\r",
+									"            ]\r",
+									"        }\r",
+									"    },\r",
+									"    \"examples\": [{\r",
+									"        \"token\": \"eadacdd6b5295f5\"\r",
+									"    }]\r",
+									"};\r",
+									"\r",
+									"pm.test(\"verify schema is valid\",function(){\r",
+									"    var responsebody = pm.response.json();\r",
+									"    pm.expect(tv4.validate(responsebody,schema),\"schema is invalid kindly retry\").to.be.true;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"//creating variables\r",
+									"\r",
+									"\r",
+									"pm.environment.set(\"auth_token\", pm.response.json().token);var template = `\r",
+									"<h2>Authentication Token</h2>\r",
+									"<p>{{response.token}}</p>\r",
+									"`;\r",
+									"\r",
+									"function constructVisualizerPayload() {\r",
+									"    return {response: pm.response.json()};\r",
+									"}\r",
+									"\r",
+									"pm.visualizer.set(template, constructVisualizerPayload());"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\" : \"admin\",\r\n    \"password\" : \"password123\"\r\n}"
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/auth",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"auth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createbookingid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//setting variables\r",
+									"pm.environment.set(\"bookingid\" ,pm.response.json().bookingid);\r",
+									"//set collection varibale name to verify later\r",
+									"pm.collectionVariables.set(\"responseFirstName\",pm.response.json().booking.firstname);\r",
+									"pm.collectionVariables.set(\"responseLastName\",pm.response.json().booking.lastname);\r",
+									"//tests\r",
+									"\r",
+									"var schema ={\r",
+									"    \"$schema\": \"https://json-schema.org/draft/2019-09/schema\",\r",
+									"    \"$id\": \"http://example.com/example.json\",\r",
+									"    \"type\": \"object\",\r",
+									"    \"default\": {},\r",
+									"    \"title\": \"Root Schema\",\r",
+									"    \"required\": [\r",
+									"        \"bookingid\",\r",
+									"        \"booking\"\r",
+									"    ],\r",
+									"      \"additionalProperties\":false,\r",
+									"    \"properties\": {\r",
+									"        \"bookingid\": {\r",
+									"            \"type\": \"integer\",\r",
+									"            \"default\": 0,\r",
+									"            \"title\": \"The bookingid Schema\",\r",
+									"            \"examples\": [\r",
+									"                4716\r",
+									"            ]\r",
+									"        },\r",
+									"        \"booking\": {\r",
+									"            \"type\": \"object\",\r",
+									"            \"default\": {},\r",
+									"            \"title\": \"The booking Schema\",\r",
+									"            \"required\": [\r",
+									"                \"firstname\",\r",
+									"                \"lastname\",\r",
+									"                \"totalprice\",\r",
+									"                \"depositpaid\",\r",
+									"                \"bookingdates\",\r",
+									"                \"additionalneeds\"\r",
+									"            ],\r",
+									"            \"properties\": {\r",
+									"                \"firstname\": {\r",
+									"                    \"type\": \"string\",\r",
+									"                    \"default\": \"\",\r",
+									"                    \"title\": \"The firstname Schema\",\r",
+									"                    \"examples\": [\r",
+									"                        \"Jim\"\r",
+									"                    ]\r",
+									"                },\r",
+									"                \"lastname\": {\r",
+									"                    \"type\": \"string\",\r",
+									"                    \"default\": \"\",\r",
+									"                    \"title\": \"The lastname Schema\",\r",
+									"                    \"examples\": [\r",
+									"                        \"Brown\"\r",
+									"                    ]\r",
+									"                },\r",
+									"                \"totalprice\": {\r",
+									"                    \"type\": \"integer\",\r",
+									"                    \"default\": 0,\r",
+									"                    \"title\": \"The totalprice Schema\",\r",
+									"                    \"examples\": [\r",
+									"                        111\r",
+									"                    ]\r",
+									"                },\r",
+									"                \"depositpaid\": {\r",
+									"                    \"type\": \"boolean\",\r",
+									"                    \"default\": false,\r",
+									"                    \"title\": \"The depositpaid Schema\",\r",
+									"                    \"examples\": [\r",
+									"                        true\r",
+									"                    ]\r",
+									"                },\r",
+									"                \"bookingdates\": {\r",
+									"                    \"type\": \"object\",\r",
+									"                    \"default\": {},\r",
+									"                    \"title\": \"The bookingdates Schema\",\r",
+									"                    \"required\": [\r",
+									"                        \"checkin\",\r",
+									"                        \"checkout\"\r",
+									"                    ],\r",
+									"                    \"properties\": {\r",
+									"                        \"checkin\": {\r",
+									"                            \"type\": \"string\",\r",
+									"                            \"default\": \"\",\r",
+									"                            \"title\": \"The checkin Schema\",\r",
+									"                            \"examples\": [\r",
+									"                                \"2018-01-01\"\r",
+									"                            ]\r",
+									"                        },\r",
+									"                        \"checkout\": {\r",
+									"                            \"type\": \"string\",\r",
+									"                            \"default\": \"\",\r",
+									"                            \"title\": \"The checkout Schema\",\r",
+									"                            \"examples\": [\r",
+									"                                \"2019-01-01\"\r",
+									"                            ]\r",
+									"                        }\r",
+									"                    },\r",
+									"                    \"examples\": [{\r",
+									"                        \"checkin\": \"2018-01-01\",\r",
+									"                        \"checkout\": \"2019-01-01\"\r",
+									"                    }]\r",
+									"                },\r",
+									"                \"additionalneeds\": {\r",
+									"                    \"type\": \"string\",\r",
+									"                    \"default\": \"\",\r",
+									"                    \"title\": \"The additionalneeds Schema\",\r",
+									"                    \"examples\": [\r",
+									"                        \"Breakfast\"\r",
+									"                    ]\r",
+									"                }\r",
+									"            },\r",
+									"            \"examples\": [{\r",
+									"                \"firstname\": \"Jim\",\r",
+									"                \"lastname\": \"Brown\",\r",
+									"                \"totalprice\": 111,\r",
+									"                \"depositpaid\": true,\r",
+									"                \"bookingdates\": {\r",
+									"                    \"checkin\": \"2018-01-01\",\r",
+									"                    \"checkout\": \"2019-01-01\"\r",
+									"                },\r",
+									"                \"additionalneeds\": \"Breakfast\"\r",
+									"            }]\r",
+									"        }\r",
+									"    },\r",
+									"    \"examples\": [{\r",
+									"        \"bookingid\": 4716,\r",
+									"        \"booking\": {\r",
+									"            \"firstname\": \"Jim\",\r",
+									"            \"lastname\": \"Brown\",\r",
+									"            \"totalprice\": 111,\r",
+									"            \"depositpaid\": true,\r",
+									"            \"bookingdates\": {\r",
+									"                \"checkin\": \"2018-01-01\",\r",
+									"                \"checkout\": \"2019-01-01\"\r",
+									"            },\r",
+									"            \"additionalneeds\": \"Breakfast\"\r",
+									"        }\r",
+									"    }]\r",
+									"};\r",
+									"\r",
+									"pm.test(\"check schema is valid\",function(){\r",
+									"    pm.expect(tv4.validate(pm.response.json(),schema)).to.be.true;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"status code is 200\",function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstname\" : \"Madhuri\",\r\n    \"lastname\" : \"Chinnareddygari\",\r\n    \"totalprice\" : 111,\r\n    \"depositpaid\" : true,\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"2018-01-01\",\r\n        \"checkout\" : \"2019-01-01\"\r\n    },\r\n    \"additionalneeds\" : \"Breakfast\"\r\n}"
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get bookingid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//tests\r",
+									"\r",
+									"var schema ={\r",
+									"    \"$schema\": \"https://json-schema.org/draft/2019-09/schema\",\r",
+									"    \"$id\": \"http://example.com/example.json\",\r",
+									"    \"title\": \"Root Schema\",\r",
+									"    \"type\": \"object\",\r",
+									"    \"default\": {},\r",
+									"    \"required\": [\r",
+									"        \"firstname\",\r",
+									"        \"lastname\",\r",
+									"        \"totalprice\",\r",
+									"        \"depositpaid\",\r",
+									"        \"bookingdates\",\r",
+									"        \"additionalneeds\"\r",
+									"    ],\r",
+									"    \"additionalProperties\": true,\r",
+									"    \"properties\": {\r",
+									"        \"firstname\": {\r",
+									"            \"title\": \"The firstname Schema\",\r",
+									"            \"type\": \"string\",\r",
+									"            \"default\": \"\",\r",
+									"            \"examples\": [\r",
+									"                \"abc\"\r",
+									"            ]\r",
+									"        },\r",
+									"        \"lastname\": {\r",
+									"            \"title\": \"The lastname Schema\",\r",
+									"            \"type\": \"string\",\r",
+									"            \"default\": \"\",\r",
+									"            \"examples\": [\r",
+									"                \"xyz\"\r",
+									"            ]\r",
+									"        },\r",
+									"        \"totalprice\": {\r",
+									"            \"title\": \"The totalprice Schema\",\r",
+									"            \"type\": \"integer\",\r",
+									"            \"default\": 0,\r",
+									"            \"examples\": [\r",
+									"                111\r",
+									"            ]\r",
+									"        },\r",
+									"        \"depositpaid\": {\r",
+									"            \"title\": \"The depositpaid Schema\",\r",
+									"            \"type\": \"boolean\",\r",
+									"            \"default\": false,\r",
+									"            \"examples\": [\r",
+									"                true\r",
+									"            ]\r",
+									"        },\r",
+									"        \"bookingdates\": {\r",
+									"            \"title\": \"The bookingdates Schema\",\r",
+									"            \"type\": \"object\",\r",
+									"            \"default\": {},\r",
+									"            \"required\": [\r",
+									"                \"checkin\",\r",
+									"                \"checkout\"\r",
+									"            ],\r",
+									"            \"additionalProperties\": true,\r",
+									"            \"properties\": {\r",
+									"                \"checkin\": {\r",
+									"                    \"title\": \"The checkin Schema\",\r",
+									"                    \"type\": \"string\",\r",
+									"                    \"default\": \"\",\r",
+									"                    \"examples\": [\r",
+									"                        \"2018-01-01\"\r",
+									"                    ]\r",
+									"                },\r",
+									"                \"checkout\": {\r",
+									"                    \"title\": \"The checkout Schema\",\r",
+									"                    \"type\": \"string\",\r",
+									"                    \"default\": \"\",\r",
+									"                    \"examples\": [\r",
+									"                        \"2019-01-01\"\r",
+									"                    ]\r",
+									"                }\r",
+									"            },\r",
+									"            \"examples\": [{\r",
+									"                \"checkin\": \"2018-01-01\",\r",
+									"                \"checkout\": \"2019-01-01\"\r",
+									"            }]\r",
+									"        },\r",
+									"        \"additionalneeds\": {\r",
+									"            \"title\": \"The additionalneeds Schema\",\r",
+									"            \"type\": \"string\",\r",
+									"            \"default\": \"\",\r",
+									"            \"examples\": [\r",
+									"                \"Breakfast\"\r",
+									"            ]\r",
+									"        }\r",
+									"    },\r",
+									"    \"examples\": [{\r",
+									"        \"firstname\": \"Madhuri\",\r",
+									"        \"lastname\": \"Chinnareddygari\",\r",
+									"        \"totalprice\": 111,\r",
+									"        \"depositpaid\": true,\r",
+									"        \"bookingdates\": {\r",
+									"            \"checkin\": \"2018-01-01\",\r",
+									"            \"checkout\": \"2019-01-01\"\r",
+									"        },\r",
+									"        \"additionalneeds\": \"Breakfast\"\r",
+									"    }]\r",
+									"}\r",
+									"\r",
+									"pm.test(\"check schema is valid\",function(){\r",
+									"    pm.expect(tv4.validate(pm.response.json(),schema)).to.be.true;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"varify values of firstname and lastname\",function(){\r",
+									"    pm.expect(pm.response.json().firstname).to.be.equal(pm.collectionVariables.get(\"responseFirstName\"));\r",
+									"    pm.expect(pm.response.json().lastname).to.be.equal(pm.collectionVariables.get(\"responseLastName\"));\r",
+									"})\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking/{{bookingid}}",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking",
+								"{{bookingid}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "**Create a Booking, Update the Booking Name, Get the Booking by Id and verify**"
+		},
+		{
+			"name": "Integration2",
+			"item": [
+				{
+					"name": "auth token creation",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var schema ={\r",
+									"    \"$schema\": \"https://json-schema.org/draft/2019-09/schema\",\r",
+									"    \"$id\": \"http://example.com/example.json\",\r",
+									"    \"type\": \"object\",\r",
+									"    \"default\": {},\r",
+									"    \"title\": \"Root Schema\",\r",
+									"    \"required\": [\r",
+									"        \"token\"\r",
+									"    ],\r",
+									"    \"properties\": {\r",
+									"        \"token\": {\r",
+									"            \"type\": \"string\",\r",
+									"            \"default\": \"\",\r",
+									"            \"title\": \"The token Schema\",\r",
+									"            \"examples\": [\r",
+									"                \"eadacdd6b5295f5\"\r",
+									"            ]\r",
+									"        }\r",
+									"    },\r",
+									"    \"examples\": [{\r",
+									"        \"token\": \"eadacdd6b5295f5\"\r",
+									"    }]\r",
+									"};\r",
+									"\r",
+									"pm.test(\"verify schema is valid\",function(){\r",
+									"    var responsebody = pm.response.json();\r",
+									"    pm.expect(tv4.validate(responsebody,schema),\"schema is invalid kindly retry\").to.be.true;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"//creating variables\r",
+									"\r",
+									"\r",
+									"pm.environment.set(\"auth_token\", pm.response.json().token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\" : \"admin\",\r\n    \"password\" : \"password123\"\r\n}"
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/auth",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"auth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createbookingid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//setting variables\r",
+									"pm.environment.set(\"bookingid\" ,pm.response.json().bookingid);\r",
+									"//set collection varibale name to verify later\r",
+									"pm.collectionVariables.set(\"responseFirstName\",pm.response.json().booking.firstname);\r",
+									"pm.collectionVariables.set(\"responseLastName\",pm.response.json().booking.lastname);\r",
+									"//tests\r",
+									"\r",
+									"var schema ={\r",
+									"    \"$schema\": \"https://json-schema.org/draft/2019-09/schema\",\r",
+									"    \"$id\": \"http://example.com/example.json\",\r",
+									"    \"type\": \"object\",\r",
+									"    \"default\": {},\r",
+									"    \"title\": \"Root Schema\",\r",
+									"    \"required\": [\r",
+									"        \"bookingid\",\r",
+									"        \"booking\"\r",
+									"    ],\r",
+									"      \"additionalProperties\":false,\r",
+									"    \"properties\": {\r",
+									"        \"bookingid\": {\r",
+									"            \"type\": \"integer\",\r",
+									"            \"default\": 0,\r",
+									"            \"title\": \"The bookingid Schema\",\r",
+									"            \"examples\": [\r",
+									"                4716\r",
+									"            ]\r",
+									"        },\r",
+									"        \"booking\": {\r",
+									"            \"type\": \"object\",\r",
+									"            \"default\": {},\r",
+									"            \"title\": \"The booking Schema\",\r",
+									"            \"required\": [\r",
+									"                \"firstname\",\r",
+									"                \"lastname\",\r",
+									"                \"totalprice\",\r",
+									"                \"depositpaid\",\r",
+									"                \"bookingdates\",\r",
+									"                \"additionalneeds\"\r",
+									"            ],\r",
+									"            \"properties\": {\r",
+									"                \"firstname\": {\r",
+									"                    \"type\": \"string\",\r",
+									"                    \"default\": \"\",\r",
+									"                    \"title\": \"The firstname Schema\",\r",
+									"                    \"examples\": [\r",
+									"                        \"Jim\"\r",
+									"                    ]\r",
+									"                },\r",
+									"                \"lastname\": {\r",
+									"                    \"type\": \"string\",\r",
+									"                    \"default\": \"\",\r",
+									"                    \"title\": \"The lastname Schema\",\r",
+									"                    \"examples\": [\r",
+									"                        \"Brown\"\r",
+									"                    ]\r",
+									"                },\r",
+									"                \"totalprice\": {\r",
+									"                    \"type\": \"integer\",\r",
+									"                    \"default\": 0,\r",
+									"                    \"title\": \"The totalprice Schema\",\r",
+									"                    \"examples\": [\r",
+									"                        111\r",
+									"                    ]\r",
+									"                },\r",
+									"                \"depositpaid\": {\r",
+									"                    \"type\": \"boolean\",\r",
+									"                    \"default\": false,\r",
+									"                    \"title\": \"The depositpaid Schema\",\r",
+									"                    \"examples\": [\r",
+									"                        true\r",
+									"                    ]\r",
+									"                },\r",
+									"                \"bookingdates\": {\r",
+									"                    \"type\": \"object\",\r",
+									"                    \"default\": {},\r",
+									"                    \"title\": \"The bookingdates Schema\",\r",
+									"                    \"required\": [\r",
+									"                        \"checkin\",\r",
+									"                        \"checkout\"\r",
+									"                    ],\r",
+									"                    \"properties\": {\r",
+									"                        \"checkin\": {\r",
+									"                            \"type\": \"string\",\r",
+									"                            \"default\": \"\",\r",
+									"                            \"title\": \"The checkin Schema\",\r",
+									"                            \"examples\": [\r",
+									"                                \"2018-01-01\"\r",
+									"                            ]\r",
+									"                        },\r",
+									"                        \"checkout\": {\r",
+									"                            \"type\": \"string\",\r",
+									"                            \"default\": \"\",\r",
+									"                            \"title\": \"The checkout Schema\",\r",
+									"                            \"examples\": [\r",
+									"                                \"2019-01-01\"\r",
+									"                            ]\r",
+									"                        }\r",
+									"                    },\r",
+									"                    \"examples\": [{\r",
+									"                        \"checkin\": \"2018-01-01\",\r",
+									"                        \"checkout\": \"2019-01-01\"\r",
+									"                    }]\r",
+									"                },\r",
+									"                \"additionalneeds\": {\r",
+									"                    \"type\": \"string\",\r",
+									"                    \"default\": \"\",\r",
+									"                    \"title\": \"The additionalneeds Schema\",\r",
+									"                    \"examples\": [\r",
+									"                        \"Breakfast\"\r",
+									"                    ]\r",
+									"                }\r",
+									"            },\r",
+									"            \"examples\": [{\r",
+									"                \"firstname\": \"Jim\",\r",
+									"                \"lastname\": \"Brown\",\r",
+									"                \"totalprice\": 111,\r",
+									"                \"depositpaid\": true,\r",
+									"                \"bookingdates\": {\r",
+									"                    \"checkin\": \"2018-01-01\",\r",
+									"                    \"checkout\": \"2019-01-01\"\r",
+									"                },\r",
+									"                \"additionalneeds\": \"Breakfast\"\r",
+									"            }]\r",
+									"        }\r",
+									"    },\r",
+									"    \"examples\": [{\r",
+									"        \"bookingid\": 4716,\r",
+									"        \"booking\": {\r",
+									"            \"firstname\": \"Jim\",\r",
+									"            \"lastname\": \"Brown\",\r",
+									"            \"totalprice\": 111,\r",
+									"            \"depositpaid\": true,\r",
+									"            \"bookingdates\": {\r",
+									"                \"checkin\": \"2018-01-01\",\r",
+									"                \"checkout\": \"2019-01-01\"\r",
+									"            },\r",
+									"            \"additionalneeds\": \"Breakfast\"\r",
+									"        }\r",
+									"    }]\r",
+									"};\r",
+									"\r",
+									"pm.test(\"check schema is valid\",function(){\r",
+									"    pm.expect(tv4.validate(pm.response.json(),schema)).to.be.true;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"status code is 200\",function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstname\" : \"Madhuri\",\r\n    \"lastname\" : \"Chinnareddygari\",\r\n    \"totalprice\" : 111,\r\n    \"depositpaid\" : true,\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"2018-01-01\",\r\n        \"checkout\" : \"2019-01-01\"\r\n    },\r\n    \"additionalneeds\" : \"Breakfast\"\r\n}"
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete booking id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"reponse to have Created text\",function(){\r",
+									"   pm.expect( pm.response.text()).to.include(\"Created\");\r",
+									"})\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Cookie",
+								"value": "token={{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking/{{bookingid}}",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking",
+								"{{bookingid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get bookingid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//tests\r",
+									"\r",
+									"pm.test(\"status code is 404 not found\", function(){\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking/{{bookingid}}",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking",
+								"{{bookingid}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Integration3",
+			"item": [
+				{
+					"name": "auth token creation",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var schema ={\r",
+									"    \"$schema\": \"https://json-schema.org/draft/2019-09/schema\",\r",
+									"    \"$id\": \"http://example.com/example.json\",\r",
+									"    \"type\": \"object\",\r",
+									"    \"default\": {},\r",
+									"    \"title\": \"Root Schema\",\r",
+									"    \"required\": [\r",
+									"        \"token\"\r",
+									"    ],\r",
+									"    \"properties\": {\r",
+									"        \"token\": {\r",
+									"            \"type\": \"string\",\r",
+									"            \"default\": \"\",\r",
+									"            \"title\": \"The token Schema\",\r",
+									"            \"examples\": [\r",
+									"                \"eadacdd6b5295f5\"\r",
+									"            ]\r",
+									"        }\r",
+									"    },\r",
+									"    \"examples\": [{\r",
+									"        \"token\": \"eadacdd6b5295f5\"\r",
+									"    }]\r",
+									"};\r",
+									"\r",
+									"pm.test(\"verify schema is valid\",function(){\r",
+									"    var responsebody = pm.response.json();\r",
+									"    pm.expect(tv4.validate(responsebody,schema),\"schema is invalid kindly retry\").to.be.true;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"//creating variables\r",
+									"\r",
+									"\r",
+									"pm.environment.set(\"auth_token\", pm.response.json().token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\" : \"admin\",\r\n    \"password\" : \"password123\"\r\n}"
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/auth",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"auth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all booking ids",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"console.log((pm.response.json()).length);\r",
+									"\r",
+									"\r",
+									"//get the first booking id to update it later\r",
+									"pm.collectionVariables.set(\"idToUpdate\",pm.response.json()[0].bookingid);\r",
+									"//tests\r",
+									"pm.test(\"verify atleast one booking is present\",function(){\r",
+									"    pm.expect(pm.response.json().length).to.be.above(0);\r",
+									"})\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update bookingid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"//check schema\r",
+									"var schema ={\r",
+									"    \"$schema\": \"https://json-schema.org/draft/2019-09/schema\",\r",
+									"    \"$id\": \"http://example.com/example.json\",\r",
+									"    \"type\": \"object\",\r",
+									"    \"default\": {},\r",
+									"    \"title\": \"Root Schema\",\r",
+									"    \"required\": [\r",
+									"        \"firstname\",\r",
+									"        \"lastname\",\r",
+									"        \"totalprice\",\r",
+									"        \"depositpaid\",\r",
+									"        \"bookingdates\",\r",
+									"        \"additionalneeds\"\r",
+									"    ],\r",
+									"    \"properties\": {\r",
+									"        \"firstname\": {\r",
+									"            \"type\": \"string\",\r",
+									"            \"default\": \"\",\r",
+									"            \"title\": \"The firstname Schema\",\r",
+									"            \"examples\": [\r",
+									"                \"Madhuri\"\r",
+									"            ]\r",
+									"        },\r",
+									"        \"lastname\": {\r",
+									"            \"type\": \"string\",\r",
+									"            \"default\": \"\",\r",
+									"            \"title\": \"The lastname Schema\",\r",
+									"            \"examples\": [\r",
+									"                \"Chinnareddy\"\r",
+									"            ]\r",
+									"        },\r",
+									"        \"totalprice\": {\r",
+									"            \"type\": \"integer\",\r",
+									"            \"default\": 0,\r",
+									"            \"title\": \"The totalprice Schema\",\r",
+									"            \"examples\": [\r",
+									"                2000\r",
+									"            ]\r",
+									"        },\r",
+									"        \"depositpaid\": {\r",
+									"            \"type\": \"boolean\",\r",
+									"            \"default\": false,\r",
+									"            \"title\": \"The depositpaid Schema\",\r",
+									"            \"examples\": [\r",
+									"                true\r",
+									"            ]\r",
+									"        },\r",
+									"        \"bookingdates\": {\r",
+									"            \"type\": \"object\",\r",
+									"            \"default\": {},\r",
+									"            \"title\": \"The bookingdates Schema\",\r",
+									"            \"required\": [\r",
+									"                \"checkin\",\r",
+									"                \"checkout\"\r",
+									"            ],\r",
+									"            \"properties\": {\r",
+									"                \"checkin\": {\r",
+									"                    \"type\": \"string\",\r",
+									"                    \"default\": \"\",\r",
+									"                    \"title\": \"The checkin Schema\",\r",
+									"                    \"examples\": [\r",
+									"                        \"2017-01-01\"\r",
+									"                    ]\r",
+									"                },\r",
+									"                \"checkout\": {\r",
+									"                    \"type\": \"string\",\r",
+									"                    \"default\": \"\",\r",
+									"                    \"title\": \"The checkout Schema\",\r",
+									"                    \"examples\": [\r",
+									"                        \"2019-01-01\"\r",
+									"                    ]\r",
+									"                }\r",
+									"            },\r",
+									"            \"examples\": [{\r",
+									"                \"checkin\": \"2017-01-01\",\r",
+									"                \"checkout\": \"2019-01-01\"\r",
+									"            }]\r",
+									"        },\r",
+									"        \"additionalneeds\": {\r",
+									"            \"type\": \"string\",\r",
+									"            \"default\": \"\",\r",
+									"            \"title\": \"The additionalneeds Schema\",\r",
+									"            \"examples\": [\r",
+									"                \"Gym\"\r",
+									"            ]\r",
+									"        }\r",
+									"    },\r",
+									"    \"examples\": [{\r",
+									"        \"firstname\": \"Madhuri\",\r",
+									"        \"lastname\": \"Chinnareddy\",\r",
+									"        \"totalprice\": 2000,\r",
+									"        \"depositpaid\": true,\r",
+									"        \"bookingdates\": {\r",
+									"            \"checkin\": \"2017-01-01\",\r",
+									"            \"checkout\": \"2019-01-01\"\r",
+									"        },\r",
+									"        \"additionalneeds\": \"Gym\"\r",
+									"    }]\r",
+									"};\r",
+									"\r",
+									"pm.test(\"verify schema is valid\",function(){\r",
+									"\r",
+									"pm.expect(tv4.validate(\"schema\",pm.response.json())).to.be.true;\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Cookie",
+								"value": "token={{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstname\" : \"Madhuri\",\r\n    \"lastname\" : \"Chinnareddy\",\r\n    \"totalprice\" : 2000,\r\n    \"depositpaid\" : true,\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"2017-01-01\",\r\n        \"checkout\" : \"2019-01-01\"\r\n    },\r\n    \"additionalneeds\" : \"Gym\"\r\n}"
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking/{{idToUpdate}}",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking",
+								"{{idToUpdate}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get bookingid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//tests\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking/{{idToUpdate}}",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking",
+								"{{idToUpdate}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Get an Existing Booking from Get All Bookings Ids , Update a Booking and Verify using GET by id."
+		},
+		{
+			"name": "Integration4",
+			"item": [
+				{
+					"name": "auth token creation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var schema ={\r",
+									"    \"$schema\": \"https://json-schema.org/draft/2019-09/schema\",\r",
+									"    \"$id\": \"http://example.com/example.json\",\r",
+									"    \"type\": \"object\",\r",
+									"    \"default\": {},\r",
+									"    \"title\": \"Root Schema\",\r",
+									"    \"required\": [\r",
+									"        \"token\"\r",
+									"    ],\r",
+									"    \"properties\": {\r",
+									"        \"token\": {\r",
+									"            \"type\": \"string\",\r",
+									"            \"default\": \"\",\r",
+									"            \"title\": \"The token Schema\",\r",
+									"            \"examples\": [\r",
+									"                \"eadacdd6b5295f5\"\r",
+									"            ]\r",
+									"        }\r",
+									"    },\r",
+									"    \"examples\": [{\r",
+									"        \"token\": \"eadacdd6b5295f5\"\r",
+									"    }]\r",
+									"};\r",
+									"\r",
+									"pm.test(\"verify schema is valid\",function(){\r",
+									"    var responsebody = pm.response.json();\r",
+									"    pm.expect(tv4.validate(responsebody,schema),\"schema is invalid kindly retry\").to.be.true;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"//creating variables\r",
+									"\r",
+									"\r",
+									"pm.environment.set(\"auth_token\", pm.response.json().token);var template = `\r",
+									"<h2>Authentication Token</h2>\r",
+									"<p>{{response.token}}</p>\r",
+									"`;\r",
+									"\r",
+									"function constructVisualizerPayload() {\r",
+									"    return {response: pm.response.json()};\r",
+									"}\r",
+									"\r",
+									"pm.visualizer.set(template, constructVisualizerPayload());"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\" : \"admin\",\r\n    \"password\" : \"password123\"\r\n}"
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/auth",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"auth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createbookingid Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//check 500 statuscode\r",
+									"\r",
+									"pm.test(\"verify response has 500 status code\", function(){\r",
+									"    pm.response.to.have.status(500);\r",
+									"});\r",
+									"//verify reponse has internal server error text\r",
+									"\r",
+									"pm.test(\"verify Internal Server Error message in response\", function(){\r",
+									"pm.expect(pm.response.text()).to.contain(\"Internal Server Error\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\" : \"Madhuri\",\r\n    \"lastname\" : \"Chinnareddygari\",\r\n    \"totalprice\" : 111,\r\n    \"depositpaid\" : true,\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"2018-01-01\",\r\n        \"checkout\" : \"2019-01-01\"\r\n    },\r\n    \"additionalneeds\" : \"Breakfast\"\r\n}"
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking"
+							]
+						},
+						"description": "In Payload changed firstname to firstName"
+					},
+					"response": []
+				},
+				{
+					"name": "createbookingid with wrong content type",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//check 500 statuscode\r",
+									"\r",
+									"pm.test(\"verify response has 500 status code\", function(){\r",
+									"    pm.response.to.have.status(500);\r",
+									"});\r",
+									"//verify reponse has internal server error text\r",
+									"\r",
+									"pm.test(\"verify Internal Server Error message in response\", function(){\r",
+									"pm.expect(pm.response.text()).to.contain(\"Internal Server Error\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/vnd.api+json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstname\" : \"Madhuri\",\r\n    \"lastname\" : \"Chinnareddygari\",\r\n    \"totalprice\" : 111,\r\n    \"depositpaid\" : true,\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"2018-01-01\",\r\n        \"checkout\" : \"2019-01-01\"\r\n    },\r\n    \"additionalneeds\" : \"Breakfast\"\r\n}"
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking"
+							]
+						},
+						"description": "this Integration depicts **Invalid Creation by entering a wrong payload or Wrong JSON**"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Integration 5",
+			"item": [
+				{
+					"name": "auth token creation",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var schema ={\r",
+									"    \"$schema\": \"https://json-schema.org/draft/2019-09/schema\",\r",
+									"    \"$id\": \"http://example.com/example.json\",\r",
+									"    \"type\": \"object\",\r",
+									"    \"default\": {},\r",
+									"    \"title\": \"Root Schema\",\r",
+									"    \"required\": [\r",
+									"        \"token\"\r",
+									"    ],\r",
+									"    \"properties\": {\r",
+									"        \"token\": {\r",
+									"            \"type\": \"string\",\r",
+									"            \"default\": \"\",\r",
+									"            \"title\": \"The token Schema\",\r",
+									"            \"examples\": [\r",
+									"                \"eadacdd6b5295f5\"\r",
+									"            ]\r",
+									"        }\r",
+									"    },\r",
+									"    \"examples\": [{\r",
+									"        \"token\": \"eadacdd6b5295f5\"\r",
+									"    }]\r",
+									"};\r",
+									"\r",
+									"pm.test(\"verify schema is valid\",function(){\r",
+									"    var responsebody = pm.response.json();\r",
+									"    pm.expect(tv4.validate(responsebody,schema),\"schema is invalid kindly retry\").to.be.true;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"//creating variables\r",
+									"\r",
+									"\r",
+									"pm.environment.set(\"auth_token\", pm.response.json().token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\" : \"admin\",\r\n    \"password\" : \"password123\"\r\n}"
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/auth",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"auth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createbookingid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//setting variables\r",
+									"pm.environment.set(\"bookingid\" ,pm.response.json().bookingid);\r",
+									"//set collection varibale name to verify later\r",
+									"pm.collectionVariables.set(\"responseFirstName\",pm.response.json().booking.firstname);\r",
+									"pm.collectionVariables.set(\"responseLastName\",pm.response.json().booking.lastname);\r",
+									"//tests\r",
+									"\r",
+									"var schema ={\r",
+									"    \"$schema\": \"https://json-schema.org/draft/2019-09/schema\",\r",
+									"    \"$id\": \"http://example.com/example.json\",\r",
+									"    \"type\": \"object\",\r",
+									"    \"default\": {},\r",
+									"    \"title\": \"Root Schema\",\r",
+									"    \"required\": [\r",
+									"        \"bookingid\",\r",
+									"        \"booking\"\r",
+									"    ],\r",
+									"      \"additionalProperties\":false,\r",
+									"    \"properties\": {\r",
+									"        \"bookingid\": {\r",
+									"            \"type\": \"integer\",\r",
+									"            \"default\": 0,\r",
+									"            \"title\": \"The bookingid Schema\",\r",
+									"            \"examples\": [\r",
+									"                4716\r",
+									"            ]\r",
+									"        },\r",
+									"        \"booking\": {\r",
+									"            \"type\": \"object\",\r",
+									"            \"default\": {},\r",
+									"            \"title\": \"The booking Schema\",\r",
+									"            \"required\": [\r",
+									"                \"firstname\",\r",
+									"                \"lastname\",\r",
+									"                \"totalprice\",\r",
+									"                \"depositpaid\",\r",
+									"                \"bookingdates\",\r",
+									"                \"additionalneeds\"\r",
+									"            ],\r",
+									"            \"properties\": {\r",
+									"                \"firstname\": {\r",
+									"                    \"type\": \"string\",\r",
+									"                    \"default\": \"\",\r",
+									"                    \"title\": \"The firstname Schema\",\r",
+									"                    \"examples\": [\r",
+									"                        \"Jim\"\r",
+									"                    ]\r",
+									"                },\r",
+									"                \"lastname\": {\r",
+									"                    \"type\": \"string\",\r",
+									"                    \"default\": \"\",\r",
+									"                    \"title\": \"The lastname Schema\",\r",
+									"                    \"examples\": [\r",
+									"                        \"Brown\"\r",
+									"                    ]\r",
+									"                },\r",
+									"                \"totalprice\": {\r",
+									"                    \"type\": \"integer\",\r",
+									"                    \"default\": 0,\r",
+									"                    \"title\": \"The totalprice Schema\",\r",
+									"                    \"examples\": [\r",
+									"                        111\r",
+									"                    ]\r",
+									"                },\r",
+									"                \"depositpaid\": {\r",
+									"                    \"type\": \"boolean\",\r",
+									"                    \"default\": false,\r",
+									"                    \"title\": \"The depositpaid Schema\",\r",
+									"                    \"examples\": [\r",
+									"                        true\r",
+									"                    ]\r",
+									"                },\r",
+									"                \"bookingdates\": {\r",
+									"                    \"type\": \"object\",\r",
+									"                    \"default\": {},\r",
+									"                    \"title\": \"The bookingdates Schema\",\r",
+									"                    \"required\": [\r",
+									"                        \"checkin\",\r",
+									"                        \"checkout\"\r",
+									"                    ],\r",
+									"                    \"properties\": {\r",
+									"                        \"checkin\": {\r",
+									"                            \"type\": \"string\",\r",
+									"                            \"default\": \"\",\r",
+									"                            \"title\": \"The checkin Schema\",\r",
+									"                            \"examples\": [\r",
+									"                                \"2018-01-01\"\r",
+									"                            ]\r",
+									"                        },\r",
+									"                        \"checkout\": {\r",
+									"                            \"type\": \"string\",\r",
+									"                            \"default\": \"\",\r",
+									"                            \"title\": \"The checkout Schema\",\r",
+									"                            \"examples\": [\r",
+									"                                \"2019-01-01\"\r",
+									"                            ]\r",
+									"                        }\r",
+									"                    },\r",
+									"                    \"examples\": [{\r",
+									"                        \"checkin\": \"2018-01-01\",\r",
+									"                        \"checkout\": \"2019-01-01\"\r",
+									"                    }]\r",
+									"                },\r",
+									"                \"additionalneeds\": {\r",
+									"                    \"type\": \"string\",\r",
+									"                    \"default\": \"\",\r",
+									"                    \"title\": \"The additionalneeds Schema\",\r",
+									"                    \"examples\": [\r",
+									"                        \"Breakfast\"\r",
+									"                    ]\r",
+									"                }\r",
+									"            },\r",
+									"            \"examples\": [{\r",
+									"                \"firstname\": \"Jim\",\r",
+									"                \"lastname\": \"Brown\",\r",
+									"                \"totalprice\": 111,\r",
+									"                \"depositpaid\": true,\r",
+									"                \"bookingdates\": {\r",
+									"                    \"checkin\": \"2018-01-01\",\r",
+									"                    \"checkout\": \"2019-01-01\"\r",
+									"                },\r",
+									"                \"additionalneeds\": \"Breakfast\"\r",
+									"            }]\r",
+									"        }\r",
+									"    },\r",
+									"    \"examples\": [{\r",
+									"        \"bookingid\": 4716,\r",
+									"        \"booking\": {\r",
+									"            \"firstname\": \"Jim\",\r",
+									"            \"lastname\": \"Brown\",\r",
+									"            \"totalprice\": 111,\r",
+									"            \"depositpaid\": true,\r",
+									"            \"bookingdates\": {\r",
+									"                \"checkin\": \"2018-01-01\",\r",
+									"                \"checkout\": \"2019-01-01\"\r",
+									"            },\r",
+									"            \"additionalneeds\": \"Breakfast\"\r",
+									"        }\r",
+									"    }]\r",
+									"};\r",
+									"\r",
+									"pm.test(\"check schema is valid\",function(){\r",
+									"    pm.expect(tv4.validate(pm.response.json(),schema)).to.be.true;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"status code is 200\",function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstname\" : \"Madhuri\",\r\n    \"lastname\" : \"Chinnareddygari\",\r\n    \"totalprice\" : 111,\r\n    \"depositpaid\" : true,\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"2018-01-01\",\r\n        \"checkout\" : \"2019-01-01\"\r\n    },\r\n    \"additionalneeds\" : \"Breakfast\"\r\n}"
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete booking id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"reponse to have Created text\",function(){\r",
+									"   pm.expect( pm.response.text()).to.include(\"Created\");\r",
+									"})\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Cookie",
+								"value": "token={{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking/{{bookingid}}",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking",
+								"{{bookingid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update bookingid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//check 405 status code\r",
+									"pm.test(\"Verify 405 status code\",function(){\r",
+									" pm.response.to.have.status(405);\r",
+									"});\r",
+									"\r",
+									"//check method not allowed string is present\r",
+									"pm.test(\"Verify Method Not Allowed sting is present in response \",function(){\r",
+									"    pm.expect(pm.response.text()).to.contain(\"Method Not Allowed\");\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Cookie",
+								"value": "token={{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstname\" : \"Madhuri\",\r\n    \"lastname\" : \"Chinnareddy\",\r\n    \"totalprice\" : 2000,\r\n    \"depositpaid\" : true,\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"2017-01-01\",\r\n        \"checkout\" : \"2019-01-01\"\r\n    },\r\n    \"additionalneeds\" : \"Gym\"\r\n}"
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking/{{bookingid}}",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking",
+								"{{bookingid}}"
+							]
+						},
+						"description": "Update a deleted booking id, expected Method Not Allowed in reponse with 405 status code"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "responseFirstName",
+			"value": ""
+		},
+		{
+			"key": "responseLastName",
+			"value": ""
+		},
+		{
+			"key": "idToUpdate",
+			"value": ""
+		}
+	]
+}
